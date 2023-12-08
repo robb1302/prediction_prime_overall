@@ -28,3 +28,5 @@ DATABASE = "data/football.db"
 SRC_PATH = os.path.join(ROOT_FOLDER, 'src/')
 
 UTILS_PATH = os.path.join(SRC_PATH, 'utils/')
+
+plot_feature_mapping = {"HeadingAccuracy": "Heading Accuracy","FKAccuracy":"Free Kick Accuracy","ShortPassing":"Short Passing","BallControl":"Ball Control","ShotPower":"Shot Power","SprintSpeed":"Sprint Speed"}

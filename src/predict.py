@@ -1,4 +1,5 @@
-from prepare import add_features_raw
+from prediction_prime_overall.src.prepare import add_features_raw
+from prediction_prime_overall.src.eval import get_shap_plot_indv
 import shap
 import pandas as pd
 import numpy as np
@@ -47,9 +48,6 @@ def analyze_individual_ID(ID,df_raw,attributes,model,scaler,explainer):
         # player_skills['offense']  = 2
 
         print("pred",pred)
-        from eval import get_shap_plot_indv
-
-
         player_shaps = get_shap_plot_indv(skills = player_skills,explainer=explainer)
         player_df = pd.concat([df_raw.loc[player_skills.index.values[0]][attributes].T,player_shaps],axis=1)
         print(player_df)

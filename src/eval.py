@@ -10,6 +10,23 @@ import numpy as np
 import mlflow 
 import os 
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+import shap
+import scikitplot as skplt
+import mlflow
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+import statsmodels.api as sm
+from sklearn.model_selection import train_test_split
+import mlflow
+import pandas as pd
+from sklearn.metrics import (
+    roc_auc_score,
+    precision_recall_curve,
+    auc,
+    accuracy_score,
+    precision_recall_fscore_support
+)
 
 
 def plot_correlation_heatmap(df):
@@ -97,8 +114,7 @@ def plot_feature_importance(model, title=None, top_n=20):
 
 
 def individual_shap_valuess(values, attributes,player_index):
-    import pandas as pd
-    from sklearn.preprocessing import MinMaxScaler
+
 
     shaps = pd.DataFrame(values,columns=attributes,index = player_index)
     # Initialize the MinMaxScaler
@@ -160,9 +176,7 @@ def create_polar_plot(data_series, positive_color= '#5a7b6c', negative_color='#e
     plt.show()
 
 
-import shap
-import scikitplot as skplt
-import mlflow
+
 def plot_auc_curves(y_true,y_proba):
     skplt.metrics.plot_roc(y_true, y_proba)
     
@@ -206,16 +220,6 @@ def plot_shap_summary(model,df,K=25):
     os.remove(shap_plot_filename)
     return explainer
 
-
-import mlflow
-import pandas as pd
-from sklearn.metrics import (
-    roc_auc_score,
-    precision_recall_curve,
-    auc,
-    accuracy_score,
-    precision_recall_fscore_support
-)
 
 def log_metrics_in_mlflow(y_test,y_prob,y_pred):
 
@@ -302,9 +306,7 @@ def log_metrics_in_mlflow_regression(y_test, y_pred,X=None):
     mlflow.log_metrics(metrics_to_log)
 
 
-import numpy as np
-import statsmodels.api as sm
-from sklearn.model_selection import train_test_split
+
 
 def calculate_mape(y_true, y_pred):
     try:
