@@ -23,7 +23,7 @@ DATA_PROCESSED = os.path.join(DATA, 'processed/')
 # Final data directory
 DATA_FINAL = os.path.join(DATA, 'final/')
 
-DATABASE = "data/football.db"
+DATABASE = "data_warehouse/football.db"
 
 SRC_PATH = os.path.join(ROOT_FOLDER, 'src/')
 
