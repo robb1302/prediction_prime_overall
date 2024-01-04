@@ -132,7 +132,8 @@ def get_shap_plot_indv(skills,explainer):
         shap_skills = shap_skills[1]
     shap_indv = np.round(shap_skills,2)[0]
     if not (type(explainer.expected_value) == np.float32 or  type(explainer.expected_value) == float):
-        base_line = explainer.expected_value[1]
+        n = len(explainer.expected_value) - 1
+        base_line = explainer.expected_value[n]
     else:
         base_line = explainer.expected_value
     shap.plots.force(base_line, shap_indv, skills, matplotlib = True)
@@ -142,10 +143,13 @@ def get_shap_plot_indv(skills,explainer):
 
 
 
-def create_polar_plot(data_series, positive_color= '#5a7b6c', negative_color='#e34234'):
+import numpy as np
+import matplotlib.pyplot as plt
+
+def create_polar_plot(data_series, positive_color='#00000', negative_color='#FFFFF'):
     fig = plt.figure(figsize=(8, 6))
     fig.patch.set_facecolor('black')  # Set background to black
-    ax = fig.add_subplot(111, projection="polar")
+    ax = fig.add_subplot(111, projection="polar",)
     font_color = "white"
     # Custom styles
     ax.set_facecolor('black')  # Set clean black background
@@ -166,11 +170,11 @@ def create_polar_plot(data_series, positive_color= '#5a7b6c', negative_color='#e
     plt.xticks(theta, data_series.index, color=font_color, size=12, rotation=45)  # Rotate tick labels
 
     # Set title and axis labels
-    plt.title("Skill Impact", fontsize=16, fontweight='bold', color=font_color)
+    # plt.title("Skill Impact", fontsize=16, fontweight='bold', color=font_color)
     ax.set_yticklabels([])  # Remove radial tick labels
 
     # Add polar grid with light and white gridlines
-    ax.grid(False, color='white', linestyle='--', linewidth=0.1, alpha=0.7)
+    ax.grid(False, color='black', linestyle='--', linewidth=0.1, alpha=0.0)
 
     # Show the plot
     plt.show()
