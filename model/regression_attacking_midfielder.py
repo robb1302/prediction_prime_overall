@@ -7,11 +7,8 @@ AUTO_FEATURE_SELECT = 'MANUAL'
 #r2 sehr gut -> 0.45
 # 'explained_variance'
 # HUBER
-if SCORING in ['neg_mean_squared_error']:
-    DIRECTION = "minimize"
-else:
-    DIRECTION = "maximize"
-TRIALS = 30    
+DIRECTION = "maximize"
+TRIALS = 100    
 CLASS_WEIGHTS = 'balanced'
 EXPERIEMENT_NAME = "attacking_midfielder_prime"
 SAVE_MODEL_NAME = EXPERIEMENT_NAME
@@ -23,18 +20,23 @@ OFFENSE = 0.5
 
 PLAYER_ATTRIBUTES = [  
                     # 'central','offense','Age',
+                    # 'Potential',
                     # 'Crossing', 
                     'ShortPassing',  
-                    # 'Curve',   'LongPassing',
+                    # 'Curve',   
+                    # 'LongPassing',
                     'Finishing', 
-                    # 'HeadingAccuracy', 'Penalties',
+                    # 'HeadingAccuracy',
+                    # 'Penalties',
                     'Positioning',
                     # 'ShotPower',  'LongShots','FKAccuracy','Volleys', 
-                    'BallControl','Dribbling',
+                    'BallControl',
+                    'Dribbling',
                     # 'Acceleration', 'SprintSpeed', 'Agility', 'Balance', 
                     # 'Jumping', 'Stamina', 'Strength',
                     # 'Composure', 
-                    'Reactions', 'Vision',
+                    # 'Reactions',
+                    'Vision',
                     # 'Aggression',  
                     # 'StandingTackle', 'SlidingTackle', 'Marking',  'Defensive awareness', 'Interceptions', 
                     # 'GKDiving', 'GKHandling', 'GKKicking','GKPositioning', 'GKReflexes'
@@ -52,7 +54,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression, HuberRegressor, Ridge
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, classification_report
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, classification_report, mean_absolute_percentage_error
 from sklearn.ensemble import RandomForestRegressor
 from xgboost import XGBRegressor
 from lightgbm import LGBMRegressor
@@ -156,7 +158,7 @@ df_potentials = df[(df.set=="valid")&(df.Age<26)&(df.Potential>=TARGET_OVERALL)]
 df = df_raw.copy()
 
 # Mapping of years to dataset categories
-year_to_category = {2011: 'train', 2012: 'train', 2013: 'train', 2014: 'train', 2015: 'train', 2016: 'train', 2017: 'train', 2018: 'test', 2019: 'test', 2020: 'test', 2021: 'valid', 2022: 'valid', 2023: 'valid', 2024: 'valid'}
+year_to_category = {2011: 'train', 2012: 'train', 2013: 'train', 2014: 'train', 2015: 'train', 2016: 'train', 2017: 'train', 2018: 'train', 2019: 'test', 2020: 'valid', 2021: 'valid', 2022: 'valid', 2023: 'valid', 2024: 'valid'}
 df['set'] = df.index.get_level_values('FIFA').values
 # Apply the mapping to the "FIFA" column
 df['set'] = df['set'].map(year_to_category)
@@ -221,16 +223,59 @@ X_train_scaled_df = pd.DataFrame(X_train_scaled, index=X_train.index, columns=PL
 X_test_scaled_df = pd.DataFrame(X_test_scaled, index=X_test.index, columns=PLAYER_ATTRIBUTES)
 df_potentials_scaled_df = pd.DataFrame(df_potentials_scaled, index=df_potentials.index, columns=PLAYER_ATTRIBUTES)
 
+
+import optuna
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import cross_val_score, KFold
+
+if HYPERTRAINING:
+    def objective(trial):
+        # Define hyperparameters to optimize
+        params = {
+            'n_estimators': trial.suggest_int('n_estimators', 100, 200),
+            'alpha': trial.suggest_float('alpha', 0.7, 0.9),
+            'max_depth': trial.suggest_int('max_depth', 1,10),
+            'min_samples_split': trial.suggest_float('min_samples_split', 0., 0.2),
+            'min_samples_leaf': trial.suggest_float('min_samples_leaf', 0., .2),
+            'learning_rate': trial.suggest_float('learning_rate', 0.05, 0.1),
+            'random_state': 42
+        }
+
+        # Implement cross-validation
+        cv_scores = cross_val_score(GradientBoostingRegressor(**params), X_train_scaled_df, y_train, cv=CV, scoring=SCORING)
+        eval_metric = cv_scores.mean()  # Note the negative sign for mean_squared_error
+        # model = GradientBoostingRegressor(**params)
+        # model.fit(X_train_scaled_df, y_train)
+        # y_pred = model.predict(X_train_scaled_df)
+        # eval_metric = r2_score(y_train, y_pred)
+
+        return eval_metric
+
+    # Create an Optuna study for minimizing Mean Squared Error
+    study = optuna.create_study(direction=DIRECTION)
+    study.optimize(objective, n_trials=TRIALS)  # You can increase n_trials for more optimization
+
+    PARAMS_GB = study.best_params
+    best_mse = study.best_value  # Note the negative sign for mean_squared_error
+
+    print("Best hyperparameters:", PARAMS_GB)
+    print(f"Best Mean {SCORING}:", best_mse)
+else:
+    PARAMS_GB = {"random_state":42,'n_estimators': 195, 'alpha': 0.7838634035350358, 'max_depth': 4, 'min_samples_split': 0.04190814240801351, 'min_samples_leaf': 0.0036649079980674098, 'learning_rate': 0.07959310103966369}
+    PARAMS_GB = {"random_state":42}
+
 # Define regression models
 regression_models = {
-    # 'Random Forest Regressor': RandomForestRegressor(random_state=42),
-    'Gradient Boosting Regressor': GradientBoostingRegressor(random_state=42),
+    #  'Random Forest Regressor': RandomForestRegressor(random_state=42),
+    'Gradient Boosting Regressor': GradientBoostingRegressor(**PARAMS_GB),
     # 'XGBoost Regressor': XGBRegressor(random_state=42),
     # 'LightGBM Regressor': LGBMRegressor(random_state=42)
 }
 
 # Dictionary to store regression results
 regression_results = {}
+
 
 # Start MLflow runs for each regression model
 for model_name, model in regression_models.items():
@@ -281,6 +326,7 @@ for model_name, model in regression_models.items():
         # Output for quick evaluation
         mse = mean_squared_error(y_test, y_pred)
         mae = mean_absolute_error(y_test, y_pred)
+        mpe = mean_absolute_percentage_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)
 
         # Classification Report
@@ -296,6 +342,7 @@ for model_name, model in regression_models.items():
             'Classification Report': report,
             'Mean Squared Error': mse,
             'Mean Absolute Error': mae,
+            'Mean Percentage Error':mpe,
             'R2 Score': r2
         }
 
@@ -304,6 +351,7 @@ for model_name, results in regression_results.items():
     print(f"Model: {model_name}")
     print(f"Mean Squared Error: {results['Mean Squared Error']:.2f}")
     print(f"Mean Absolute Error: {results['Mean Absolute Error']:.2f}")
+    print(f"Mean Percentage Error: {results['Mean Percentage Error']:.2f}")
     print(f"R2 Score: {results['R2 Score']:.2f}")
     print()
 
