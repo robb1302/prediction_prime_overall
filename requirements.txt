@@ -1,0 +1,17 @@
+ipykernel
+pandas
+numpy
+shap
+scipy
+xgboost
+scikit-learn
+tqdm
+lightgbm
+seaborn
+beautifulsoup4
+sqlalchemy
+requests
+mlflow
+optuna
+scikit-plot
+statsmodel

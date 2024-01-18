@@ -8,18 +8,19 @@ AUTO_FEATURE_SELECT = 'MANUAL'
 # 'explained_variance'
 # HUBER
 DIRECTION = "maximize"
-TRIALS = 100    
+TRIALS = 25    
 CLASS_WEIGHTS = 'balanced'
-EXPERIEMENT_NAME = "attacking_midfielder_prime"
+EXPERIEMENT_NAME = "winger_prime"
 SAVE_MODEL_NAME = EXPERIEMENT_NAME
 RUN_NAME = None
 TARGET_OVERALL = 80
 MINDEST_POTENTIAL = 50
-CENTRAL = 1
+CENTRAL = 0
 OFFENSE = 0.5
 
 PLAYER_ATTRIBUTES = [  
-                    # 'central','offense','Age',
+                    # 'central','offense',
+    'Age',
                     # 'Potential',
                     # 'Crossing', 
                     'ShortPassing',  
@@ -70,7 +71,7 @@ import os
 
 def find_and_append_module_path():
     current_dir = os.getcwd()
-    substring_to_find = 'statsfaction'
+    substring_to_find = 'projects'
     index = current_dir.rfind(substring_to_find)
     
     if index != -1:
