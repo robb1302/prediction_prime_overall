@@ -72,7 +72,7 @@ import os
 
 def find_and_append_module_path():
     current_dir = os.getcwd()
-    substring_to_find = 'projects'
+    substring_to_find = 'statsfaction'
     index = current_dir.rfind(substring_to_find)
     
     if index != -1:

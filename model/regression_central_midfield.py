@@ -10,47 +10,43 @@ AUTO_FEATURE_SELECT = 'MANUAL'
 DIRECTION = "maximize"
 TRIALS = 25    
 CLASS_WEIGHTS = 'balanced'
-EXPERIEMENT_NAME = "winger_prime"
+EXPERIEMENT_NAME = "central_midfielder_prime"
 SAVE_MODEL_NAME = EXPERIEMENT_NAME
 RUN_NAME = None
 TARGET_OVERALL = 80
 MINDEST_POTENTIAL = 50
-CENTRAL = 0
-OFFENSE = 1
+CENTRAL = 1
+OFFENSE = 0
 
 PLAYER_ATTRIBUTES = [  
                     # 'central','offense',
                     'Age',
                     # 'Potential',
-                      'Crossing', 
+                    # 'Crossing', 
                     'ShortPassing',  
-                    #  'Curve',   
+                    # 'Curve',   
                     'LongPassing',
-                    'Finishing', 
-                    #  'HeadingAccuracy',
-                    #  'Penalties',
-                      'Positioning',
-                    #  'ShotPower', 
+                    # 'Finishing', 
+                    # 'HeadingAccuracy',
+                    # 'Penalties',
+                    'Positioning',
+                    # 'ShotPower', 
                     'LongShots',
-                    'FKAccuracy',
-                    'Volleys', 
+                    # 'FKAccuracy','Volleys', 
                     'BallControl',
                     'Dribbling',
-                    'Acceleration', 
-                    # 'SprintSpeed', 
-                    #  'Agility', 
-                    #  'Balance', 
-                    # 'Jumping',
+                    # 'Acceleration', 'SprintSpeed', 'Agility', 'Balance', 
+                    'Jumping',
                     #   'Stamina',
-                    #   'Strength',
-                     'Composure', 
-                    #  'Reactions',
-                     'Vision',
-                    'Aggression',  
+                      'Strength',
+                    # 'Composure', 
+                    'Reactions',
+                    'Vision',
+                    # 'Aggression',  
                     # 'StandingTackle', 'SlidingTackle', 'Marking',  'Defensive awareness', 'Interceptions', 
                     # 'GKDiving', 'GKHandling', 'GKKicking','GKPositioning', 'GKReflexes'
                     ]
-# PLAYER_ATTRIBUTES = ['Age', 'Crossing', 'LongPassing', 'Finishing', 'FKAccuracy', 'BallControl', 'Dribbling', 'Acceleration', 'SprintSpeed', 'Agility', 'Vision']
+# PLAYER_ATTRIBUTES = ['Crossing', 'ShortPassing','BallControl','Dribbling','Reactions','Vision']
 # Import necessary libraries and modules
 import sys
 import os
