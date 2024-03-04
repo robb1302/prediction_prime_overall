@@ -131,7 +131,9 @@ def get_shap_plot_indv(skills,explainer):
     if len(shap_skills)!=1:
         shap_skills = shap_skills[1]
     shap_indv = np.round(shap_skills,2)[0]
-    if not (type(explainer.expected_value) == np.float32 or  type(explainer.expected_value) == float):
+    
+    # LightGBM hat den expected Value NICHT in einem Array und kann direkt ablegesen werden
+    if not (type(explainer.expected_value) == np.float32 or  type(explainer.expected_value) == float or type(explainer.expected_value) == np.float64)  :
         n = len(explainer.expected_value) - 1
         base_line = explainer.expected_value[n]
     else:
